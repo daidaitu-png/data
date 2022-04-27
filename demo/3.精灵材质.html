@@ -13,6 +13,25 @@
 			// 定义全局变量
 			let scene, camera, geometry, mesh, renderer, controls;
 
+			const raycaster = new THREE.Raycaster();
+			const mouse = new THREE.Vector2();
+
+			function onMouseMove(event) {
+				// 将鼠标位置归一化为设备坐标。x 和 y 方向的取值范围是 (-1 to +1)
+
+				mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+				mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+			}
+
+			window.addEventListener("mousemove", onMouseMove, false);
+			window.addEventListener("click", function () {
+				// 计算物体和射线的焦点
+				const intersects = raycaster.intersectObjects([mesh]);
+				if (intersects.length > 0) {
+					mesh.rotation.x += 0.1;
+				}
+			});
+
 			// 初始化渲染器
 			function initRenderer() {
 				renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -44,10 +63,18 @@
 				const texture = new THREE.TextureLoader().load("./img/crate.gif");
 				material = new THREE.MeshBasicMaterial({
 					map: texture,
-          side:THREE.DoubleSide
+					side: THREE.DoubleSide,
 				});
 				mesh = new THREE.Mesh(geometry, material);
 				scene.add(mesh);
+
+				// const map = new THREE.TextureLoader().load("./img/icon.png");
+				// material = new THREE.SpriteMaterial({
+				// 	map,
+				// 	color: 0xffffff,
+				// });
+				// const sprite = new THREE.Sprite(material);
+				// scene.add(sprite);
 			}
 			// 初始化动画
 			function animate() {
